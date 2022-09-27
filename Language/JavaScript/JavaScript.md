@@ -75,3 +75,105 @@ f() // undefined
 
 - 
 
+### 数组 Array
+
+#### shift()、unshift()
+
+遍历并清空一个数组。它的前提是数组元素不能是`0`或任何布尔值等于`false`的元素，因此这样的遍历不是很可靠。
+
+```js
+var list = [1, 2, 3, 4];
+var item;
+
+while (item = list.shift()) {
+  console.log(item);
+}
+
+list // []
+```
+
+`unshift()`方法用于在数组的第一个位置添加元素，并**返回添加新元素后的数组长度**。
+
+#### concat()
+
+用于多个数组的合并，**原数组不变**。
+
+#### slice()
+
+`slice()`方法用于提取目标数组的一部分，返回一个新数组，**原数组不变**。[前闭，后开)
+
+```js
+arr.slice(start, end);
+```
+
+`slice()`方法的一个重要应用，是将类似数组的对象转为真正的数组。
+
+```js
+Array.prototype.slice.call({ 0: 'a', 1: 'b', length: 2 })
+// ['a', 'b']
+
+Array.prototype.slice.call(document.querySelectorAll("div"));
+Array.prototype.slice.call(arguments);
+```
+
+#### splice()
+
+`splice()`方法用于删除原数组的一部分成员，并可以在删除的位置添加新的数组成员，**返回值是被删除的元素**，该方法会**改变原数组**。
+
+```js
+arr.splice(start, count, addElement1, addElement2, ...);
+           
+var a = ['a', 'b', 'c', 'd', 'e', 'f'];
+a.splice(4, 2) // ["e", "f"]
+a // ["a", "b", "c", "d"]
+```
+
+如果只提供第一个参数，等同于将原数组在指定位置拆分成两个数组。
+
+```js
+var a = [1, 2, 3, 4];
+a.splice(2) // [3, 4]
+a // [1, 2]
+```
+
+#### sort()
+
+```js
+arr.sort(function (a, b) {
+  return a - b;
+})
+```
+
+`compare(a,b)` 该函数的**返回值大于0**，表示第一个成员（a）排在第二个成员（b）后面；其他情况下，都是第一个元素排在第二个元素前面。
+
+#### 遍历
+
+`forEach()`的用法与`map()`方法一致，返回新数组用 `map()` ，不返回用 `forEach()` ，需要中断遍历，使用 `for` 。
+
+#### reduce()
+
+依次处理数组的每个成员，最终累计为一个值。
+
+1. 累积变量。第一次执行时，默认为数组的第一个成员；以后每次执行时，都是上一轮的返回值。
+2. 当前变量。第一次执行时，默认为数组的第二个成员；以后每次执行时，都是下一个成员。
+3. 当前位置。一个整数，表示第二个参数（当前变量）的位置，默认为`1`。
+4. 原数组。
+
+```js
+[1, 2, 3, 4, 5].reduce(function (
+  a,   // 累积变量，必须
+  b,   // 当前变量，必须
+  i,   // 当前位置，可选
+  arr  // 原数组，可选
+) {
+  // ... ...
+```
+
+累积变量指定初值，可以把它放在`reduce()`方法和`reduceRight()`方法的第二个参数。
+
+```js
+[1, 2, 3, 4, 5].reduce(function (a, b) {
+  return a + b;
+}, 10);
+// 25
+```
