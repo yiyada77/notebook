@@ -1,2 +1,2 @@
 # notebook
-stay humble 
+Stay humble.
