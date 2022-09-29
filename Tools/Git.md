@@ -457,7 +457,7 @@ $ git commit --amend -m "commit message"
 $ git checkout -- file/to/restore.ext
 ```
 
-我们已经知道了 “checkout” 命令主要是用来切换分支用的。但是你同样可以给这个命令附带上 “--” 参数，并加上用一个空格来分隔的文件路径。这个操作将撤销在特定文件上所有的未提交的改动。
+我们已经知道了 “checkout” 命令主要是用来切换分支用的。但是你同样可以给这个命令附带上 “--” 参数，并加上用一个空格来分隔的文件路径。**这个操作将撤销在特定文件上所有的未提交的改动。**
 
 如果你想要放弃你在工作副本（working copy）中的所有本地改动，并让你的本地副本恢复到上次提交之后的版本，你可以使用 “git reset” 命令：
 
@@ -466,3 +466,102 @@ $ git reset --hard HEAD
 ```
 
 上面这个操作会通知 Git 将你本地副本上的所有文件替换到和 “HEAD” 分支一致的版本(也就是上次提交之后的版本状态)上，并放弃所有的本地改动。
+
+### 撤销已提交的改动 git revert
+
+使用 “git revert” 命令可以撤销某个之前的提交。但是这个命令并不是删除那个提交，相反的，它是恢复那个提交的改动，这只是看起来像是撤销而已。这个操作实际上会自动产生一个新的提交。在提交中包括了你想要撤销的那个提交的所有反向改动。例如在原始提交中，你在某一个位置添加一些字符，那么这个恢复提交（reverting commit）就会把这些字符删除掉。
+
+![img](assets/revert-concept.png)
+
+如果想要撤销已提交的改动，你只需要简单地给出这个提交的 commit hash：
+
+```zsh
+$ git revert 2b504be
+[master 364d412] Revert "Change headlines for about and imprint"
+ 2 files changed, 2 insertions(+), 2 deletions (-)
+
+$ git log
+commit 364d412a25ddce997ce76230598aaa7b9759f434
+Author: Tobias Günther <support@learn-git.com>
+Date: Tue Aug 6 10:23:57 2013 +0200
+
+    Revert "Change headlines for about and imprint"
+
+    This reverts commit 2b504bee4083a20e0ef1e037eea0bd913a4d56b6.
+```
+
+另外一种撤销提交的方法是使用 “git reset” 命令。这个操作不会自动产生一个新的提交，或是删除你要撤销的提交，它会重置你当前的 HEAD 分支到一个特定旧的版本，也被称作 “回滚（rolling back）” 到旧的版本：
+
+```zsh
+$ git reset --hard 2be18d9
+```
+
+在执行了这个操作之后，你当前签出的分支将被重置为版本 2be18d9。在这个版本之后的一个或者多个版本将被真正的放弃，它们也不会显示在分支的历史记录中。
+
+![img](https://www.git-tower.com/learn/media/pages/git/ebook/cn/command-line/advanced-topics/undoing-things/413538980-1664205390/reset-concept.png)
+
+如果在这个命令上使用 “--hard” 参数则一定要小心，Git 将会丢弃所有你当前可能拥有的本地改动。整个项目将会被恢复成一个之前的旧版本。
+如果你使用 “--keep” 参数来替代 “--hard” 参数，那么在 “回滚” 到的版本之后的所有改动将会转换成本地改动，并保留在你的工作目录中。
+
+> 和 “revert” 命令一样， “reset” 命令也不会删除任何已存在的提交。这些操作仅仅是做得好像这个提交不存在似的，并从历史记录中删除它们。无论如何，提交会被保存在 Git 的数据库中至少30天。因此，如果你发现你曾经不小心删除了一个仍然有用的提交，任何一个精通 Git 的同事都能为你恢复它们。
+
+## 用 diff 检查改动
+
+```zsh
+$ git diff
+diff --git a/about.html b/about.html
+index d09ab79..0c20c33 100644
+--- a/about.html
++++ b/about.html
+@@ -19,7 +19,7 @@
+   </div>
+
+   <div id="headerContainer">
+-    <h1>About&lt/h1>
++    <h1>About This Project&lt/h1>
+   </div>
+
+   <div id="contentContainer">
+diff --git a/imprint.html b/imprint.html
+index 1932d95..d34d56a 100644
+--- a/imprint.html
++++ b/imprint.html
+@@ -19,7 +19,7 @@
+   </div>
+
+   <div id="headerContainer">
+-    <h1>Imprint&lt/h1>
++    <h1>Imprint / Disclaimer&lt/h1>
+   </div>
+
+   <div id="contentContainer">
+```
+
+在不带任何参数的情况下，“git diff” 会为我们给所有在本地副本中还未被打包（unstaged）的变化做个比较，并显示出来。
+如果你仅仅是想要查看那些对于已被打包的改动的比较结果，你可以选择使用 “git diff --staged” 命令。
+
+### 检查已提交的改动 git log -p
+
+你已经学习过了 “git log” 命令，它会打印出那些最新提交的概要。但是它仅仅显示一些最基础的信息（hash，作者，时间，注释）。如果你想要查看那些改动的细节，你就可以加上 “-p” 参数来得到一个更详细的修改信息。
+
+### 比较分支和版本
+
+最后，你可能想要知道如何比较两个分支，或是两个特定项目版本。来让我们看看在 “contact-form” 分支的哪些改动并不存在于 “master” 上：
+
+```zsh
+$ git diff master..contact-form
+```
+
+相反，这些比较信息仅仅是在分支层面上的，你也可以比较任意的两个项目版本之间的内容：
+
+```zsh
+$ git diff 0023cdd..fcd6199
+```
+
+## 处理合并冲突
+
+### 撤销一个合并
+
+你可以在任何时间执行撤销操作，并返回到你开始合并之前的状态。你不会破坏项目中的任何东西。只要在命令行界面中键入 “git merge --abort” 命令，你的合并操作就会被安全的撤销。
+
+当你解决完冲突，并且在合并完成后发现一个错误，你仍然还是有机会来简单地撤销它。你只须要键入 “git reset --hard” 命令，系统就会回滚到那个合并开始前的状态，然后重新开始吧！
