@@ -302,7 +302,7 @@ $ git merge contact-form
 - 它们只涉及一个**单一主题**，而且它包含的代码要和它的主题相对应。例如，你不应该建立一个关于购物车功能的分支，并且再在这个分支上去提交一些有关于邮件订阅功能和错误修复的改动。
 - 它们都只有非常短暂的生命周期。通常情况下，这个生命周期只维持到这个开发主题的结束之后（例如当错误被修复，新功能被完成……），这个分支的改动就会被整合到项目的大环境中去，并且这个分支也会被随之删除掉。
 
-![img](https://www.git-tower.com/learn/media/pages/git/ebook/cn/command-line/branching-merging/branching-workflows/1056489448-1664205390/branch-types.png)
+![img](assets/branch-types.png)
 
 #### (B) 长期分支 Long-Running Branches
 
@@ -498,7 +498,7 @@ $ git reset --hard 2be18d9
 
 在执行了这个操作之后，你当前签出的分支将被重置为版本 2be18d9。在这个版本之后的一个或者多个版本将被真正的放弃，它们也不会显示在分支的历史记录中。
 
-![img](https://www.git-tower.com/learn/media/pages/git/ebook/cn/command-line/advanced-topics/undoing-things/413538980-1664205390/reset-concept.png)
+![img](assets/reset-concept.png)
 
 如果在这个命令上使用 “--hard” 参数则一定要小心，Git 将会丢弃所有你当前可能拥有的本地改动。整个项目将会被恢复成一个之前的旧版本。
 如果你使用 “--keep” 参数来替代 “--hard” 参数，那么在 “回滚” 到的版本之后的所有改动将会转换成本地改动，并保留在你的工作目录中。
@@ -916,3 +916,4 @@ $ git status
 使用 “git rm” ，我们可以最终删除这个子模块的文件，包括一些其它废弃的部分。
 
 提交这些改动，这个子模块就会从你的项目中被彻底地删除了。
+
